@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Figtree", sans-serif;
+}
+
+body {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+  background: #000;
+}
+
+.container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 1em;
+  width: 800px;
+  height: 500px;
+  transition: all 400ms;
+}
+
+/*
+Entendendo o efeito de "remover filtro cinza":
+Seletor:
+
+.container:hover .box: Seleciona todos os elementos .box dentro 
+do container .container quando o mouse está passando por cima do 
+container (não necessariamente sobre uma caixa específica).
+Propriedades:
+
+filter: grayscale(0%) opacity(100%): Remove o filtro de escala 
+de cinza (grayscale) e restaura a opacidade total da caixa, 
+revelando sua cor original.
+Como funciona:
+
+Quando o mouse está fora do container, a regra .container:hover .box 
+não é aplicada. As caixas dentro do container permanecem com o 
+filtro de cinza e opacidade reduzida.
+Quando o mouse passa por cima do container, a regra .container:hover 
+.box é ativada. As propriedades filter: grayscale(0%) opacity(100%) 
+são aplicadas a todas as caixas dentro do container, removendo o 
+filtro cinza e revelando suas cores originais.
+Observações:
+
+Este efeito remove o filtro cinza de todas as caixas dentro do 
+container, não apenas da caixa que o mouse está pairando.
+Se você deseja remover o filtro cinza apenas da caixa que o 
+mouse está pairando, use o seletor .box:hover em vez de 
+.container:hover .box.
+*/
+
+.container:hover .box {
+  filter: grayscale(100%) opacity(24%);
+}
+.container .box:hover {
+  filter: grayscale(0%) opacity(100%);
+}
+
+.box {
+  position: relative;
+  background: var(--img) center center;
+  background-size: cover;
+  transition: all 400ms;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+A partir daqui, a parte interessante começa:
+.container:has(.box-X:hover): este é um seletor pseudo-classe mais complexo. Ele seleciona o elemento .container SOMENTE QUANDO UM dos elementos dentro dele com a classe .box-{X} (onde {X} pode ser 1, 2, 3, 4 ou 5) está sendo passado o mouse por cima (efeito hover).
+Dentro de cada seletor .container:has(...), 
+você tem um novo conjunto de estilos para a grade do container, 
+modificando o tamanho das colunas de acordo com a caixa que 
+está sendo hoverada. Por exemplo, quando você passa o mouse 
+sobre a caixa .box-2, a classe .container:has(.box-2:hover) 
+é ativada, fazendo com que a segunda coluna da grade ocupe 
+um espaço triplo, destacando aquela caixa específica.
+*/
+
+.container:has(.box-1:hover) {
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+}
+
+.container:has(.box-2:hover) {
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+}
+
+.container:has(.box-3:hover) {
+  grid-template-columns: 1fr 1fr 3fr 1fr 1fr;
+}
+
+.container:has(.box-4:hover) {
+  grid-template-columns: 1fr 1fr 1fr 3fr 1fr;
+}
+
+.container:has(.box-5:hover) {
+  grid-template-columns: 1fr 1fr 1fr 1fr 3fr;
+}
+
+/*
+o seletor :nth-child é usado para selecionar elementos 
+com base na sua posição dentro de um container. 
+No seu código, você está selecionando todos os elementos 
+:nth-child(odd) (ímpares) e :nth-child(even) (pares) 
+dentro do container .box. 
+
+As propriedades transform: translateY(-16px) e 
+transform: translateY(16px) aplicadas a esses elementos
+ respectivamente os movem 16px para cima e para baixo, 
+ criando a ilusão de subir e descer.
+*/
+.box:nth-child(odd) {
+  transform: translateY(-16px);
+}
+
+.box:nth-child(even) {
+  transform: translateY(16px);
+}
+
+/*
+"Na renderização HTML, elementos são empilhados em camadas.
+ O ::after é criado em uma camada separada acima do box. As 
+ alterações em sua camada não afetam as camadas abaixo."
+*/
+
+.box::after {
+  content: attr(data-text);
+  position: absolute;
+  bottom: 20px;
+  background: #000;
+  color: #fff;
+  padding: 10px 10px 10px 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all 400ms;
+}
+
+.box:hover::after {
+  transform: translateY(0);
+  opacity: 1;
+  transition-delay: 400ms;
+}
